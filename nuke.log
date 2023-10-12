@@ -1,0 +1,94 @@
+aws-nuke version v2.16.0 - Mon Sep  6 14:19:03 UTC 2021 - 048c4bb92e38f8a119fb5d988f548cc622fb1b26
+
+Do you really want to nuke the account with the ID 930842625961 and the alias 'test-nuke-alias'?
+Waiting 15s before continuing.
+eu-west-3 - SNSSubscription - Owner: 930842625961 ARN: arn:aws:sns:eu-west-3:930842625961:aws-clean-notify-topic:bddec44e-0bde-407f-bba8-dec05d5ca79b - would remove
+eu-west-3 - SNSSubscription - Owner: 930842625961 ARN: arn:aws:sns:eu-west-3:930842625961:nuke-cleanser-notify-topic:68811bb1-1255-4e7a-b744-3eb818fbd513 - would remove
+eu-west-3 - CloudWatchEventsTarget - Rule: EventBridgeNukeSchedule-AwsClean Target ID: aws-account-clean-codebuild-state-machine - would remove
+eu-west-3 - CloudWatchEventsTarget - Rule: EventBridgeNukeSchedule-NukeCleanser Target ID: nuke-account-cleanser-codebuild-state-machine - would remove
+eu-west-3 - CloudWatchEventsTarget - Rule: StepFunctionsGetEventForCodeBuildStartBuildRule Target ID: StepFunctionsGetEventForCodeBuildStartBuildRule-Id - would remove
+eu-west-3 - EC2DHCPOption - dopt-052297e8bf0e7edf4 - [] - would remove
+eu-west-3 - MediaConvertQueue - Default - cannot delete default queue
+eu-west-3 - Route53ResolverRule - rslvr-autodefined-rr-internet-resolver (Internet Resolver) - [ID: "rslvr-autodefined-rr-internet-resolver", Name: "Internet Resolver"] - Filtering DomainName "."
+eu-west-3 - CloudFormationStack - AwsClean - [Name: "AwsClean"] - would remove
+eu-west-3 - CloudFormationStack - NukeCleanser - [Name: "NukeCleanser"] - would remove
+eu-west-3 - CloudFormationStack - TargetAccountIAMRoleStackSet - [Name: "TargetAccountIAMRoleStackSet"] - would remove
+eu-west-3 - CloudFormationStack - AdministratorAccountCloudFormationStackSets - [Name: "AdministratorAccountCloudFormationStackSets"] - would remove
+eu-west-3 - EC2Subnet - subnet-048b4b24335effce1 - [DefaultForAz: "true"] - would remove
+eu-west-3 - EC2Subnet - subnet-06dfd87b116971b5d - [DefaultForAz: "true"] - would remove
+eu-west-3 - EC2Subnet - subnet-0a7be2be977da8b70 - [DefaultForAz: "true"] - would remove
+eu-west-3 - SFNStateMachine - arn:aws:states:eu-west-3:930842625961:stateMachine:aws-account-clean-codebuild-state-machine - would remove
+eu-west-3 - SFNStateMachine - arn:aws:states:eu-west-3:930842625961:stateMachine:nuke-account-cleanser-codebuild-state-machine - would remove
+eu-west-3 - SNSTopic - TopicARN: arn:aws:sns:eu-west-3:930842625961:aws-clean-notify-topic - [TopicARN: "arn:aws:sns:eu-west-3:930842625961:aws-clean-notify-topic", tag:DoNotNuke: "True", tag:aws:cloudformation:logical-id: "NukeEmailTopic", tag:aws:cloudformation:stack-id: "arn:aws:cloudformation:eu-west-3:930842625961:stack/AwsClean/41d1db50-6444-11ee-9b48-0ac2cc48ec14", tag:aws:cloudformation:stack-name: "AwsClean", tag:owner: "OpsAdmin"] - would remove
+eu-west-3 - SNSTopic - TopicARN: arn:aws:sns:eu-west-3:930842625961:nuke-cleanser-notify-topic - [TopicARN: "arn:aws:sns:eu-west-3:930842625961:nuke-cleanser-notify-topic", tag:DoNotNuke: "True", tag:aws:cloudformation:logical-id: "NukeEmailTopic", tag:aws:cloudformation:stack-id: "arn:aws:cloudformation:eu-west-3:930842625961:stack/AwsClean/a638d310-642a-11ee-9838-0a55df218b92", tag:aws:cloudformation:stack-name: "AwsClean", tag:owner: "OpsAdmin"] - would remove
+eu-west-3 - CloudWatchEventsRule - Rule: EventBridgeNukeSchedule-AwsClean - would remove
+eu-west-3 - CloudWatchEventsRule - Rule: EventBridgeNukeSchedule-NukeCleanser - would remove
+eu-west-3 - CloudWatchEventsRule - Rule: StepFunctionsGetEventForCodeBuildStartBuildRule - would remove
+eu-west-3 - KMSAlias - alias/aws/dynamodb - [Name: "alias/aws/dynamodb"] - cannot delete AWS alias
+eu-west-3 - KMSAlias - alias/aws/ebs - [Name: "alias/aws/ebs"] - cannot delete AWS alias
+eu-west-3 - KMSAlias - alias/aws/elasticfilesystem - [Name: "alias/aws/elasticfilesystem"] - cannot delete AWS alias
+eu-west-3 - KMSAlias - alias/aws/es - [Name: "alias/aws/es"] - cannot delete AWS alias
+eu-west-3 - KMSAlias - alias/aws/glue - [Name: "alias/aws/glue"] - cannot delete AWS alias
+eu-west-3 - KMSAlias - alias/aws/kinesisvideo - [Name: "alias/aws/kinesisvideo"] - cannot delete AWS alias
+eu-west-3 - KMSAlias - alias/aws/rds - [Name: "alias/aws/rds"] - cannot delete AWS alias
+eu-west-3 - KMSAlias - alias/aws/redshift - [Name: "alias/aws/redshift"] - cannot delete AWS alias
+eu-west-3 - KMSAlias - alias/aws/redshifttest - [Name: "alias/aws/redshifttest"] - cannot delete AWS alias
+eu-west-3 - KMSAlias - alias/aws/s3 - [Name: "alias/aws/s3"] - cannot delete AWS alias
+eu-west-3 - KMSAlias - alias/aws/sns - [Name: "alias/aws/sns"] - cannot delete AWS alias
+eu-west-3 - KMSAlias - alias/aws/ssm - [Name: "alias/aws/ssm"] - cannot delete AWS alias
+eu-west-3 - KMSAlias - alias/aws/xray - [Name: "alias/aws/xray"] - cannot delete AWS alias
+eu-west-3 - ElasticacheCacheParameterGroup - default.memcached1.4 - [GroupFamily: "memcached1.4", GroupName: "default.memcached1.4"] - Cannot delete default cache parameter group
+eu-west-3 - ElasticacheCacheParameterGroup - default.memcached1.5 - [GroupFamily: "memcached1.5", GroupName: "default.memcached1.5"] - Cannot delete default cache parameter group
+eu-west-3 - ElasticacheCacheParameterGroup - default.memcached1.6 - [GroupFamily: "memcached1.6", GroupName: "default.memcached1.6"] - Cannot delete default cache parameter group
+eu-west-3 - ElasticacheCacheParameterGroup - default.redis2.6 - [GroupFamily: "redis2.6", GroupName: "default.redis2.6"] - Cannot delete default cache parameter group
+eu-west-3 - ElasticacheCacheParameterGroup - default.redis2.8 - [GroupFamily: "redis2.8", GroupName: "default.redis2.8"] - Cannot delete default cache parameter group
+eu-west-3 - ElasticacheCacheParameterGroup - default.redis3.2 - [GroupFamily: "redis3.2", GroupName: "default.redis3.2"] - Cannot delete default cache parameter group
+eu-west-3 - ElasticacheCacheParameterGroup - default.redis3.2.cluster.on - [GroupFamily: "redis3.2", GroupName: "default.redis3.2.cluster.on"] - Cannot delete default cache parameter group
+eu-west-3 - ElasticacheCacheParameterGroup - default.redis4.0 - [GroupFamily: "redis4.0", GroupName: "default.redis4.0"] - Cannot delete default cache parameter group
+eu-west-3 - ElasticacheCacheParameterGroup - default.redis4.0.cluster.on - [GroupFamily: "redis4.0", GroupName: "default.redis4.0.cluster.on"] - Cannot delete default cache parameter group
+eu-west-3 - ElasticacheCacheParameterGroup - default.redis5.0 - [GroupFamily: "redis5.0", GroupName: "default.redis5.0"] - Cannot delete default cache parameter group
+eu-west-3 - ElasticacheCacheParameterGroup - default.redis5.0.cluster.on - [GroupFamily: "redis5.0", GroupName: "default.redis5.0.cluster.on"] - Cannot delete default cache parameter group
+eu-west-3 - ElasticacheCacheParameterGroup - default.redis6.x - [GroupFamily: "redis6.x", GroupName: "default.redis6.x"] - Cannot delete default cache parameter group
+eu-west-3 - ElasticacheCacheParameterGroup - default.redis6.x.cluster.on - [GroupFamily: "redis6.x", GroupName: "default.redis6.x.cluster.on"] - Cannot delete default cache parameter group
+eu-west-3 - ElasticacheCacheParameterGroup - default.redis7 - [GroupFamily: "redis7", GroupName: "default.redis7"] - Cannot delete default cache parameter group
+eu-west-3 - ElasticacheCacheParameterGroup - default.redis7.cluster.on - [GroupFamily: "redis7", GroupName: "default.redis7.cluster.on"] - Cannot delete default cache parameter group
+eu-west-3 - CloudWatchLogsLogGroup - AccountNuker-AwsClean - would remove
+eu-west-3 - EC2InternetGatewayAttachment - igw-02c778585b820ff18 -> vpc-0ec227719527381dd - [] - would remove
+eu-west-3 - EC2RouteTable - rtb-0b0796ab1959dff56 - [] - would remove
+eu-west-3 - AthenaWorkGroup - primary - [ARN: "arn:aws:athena:eu-west-3:930842625961:workgroup/primary", Name: "primary"] - cannot delete primary athena work group
+eu-west-3 - EC2InternetGateway - igw-02c778585b820ff18 - [] - would remove
+eu-west-3 - CodeBuildProject - AccountNuker-AwsClean - [ProjectName: "AccountNuker-AwsClean", tag:DoNotNuke: "True", tag:aws:cloudformation:logical-id: "NukeCodeBuildProject", tag:aws:cloudformation:stack-id: "arn:aws:cloudformation:eu-west-3:930842625961:stack/AwsClean/41d1db50-6444-11ee-9b48-0ac2cc48ec14", tag:aws:cloudformation:stack-name: "AwsClean", tag:owner: "OpsAdmin"] - would remove
+eu-west-3 - CodeBuildProject - AccountNuker-NukeCleanser - [ProjectName: "AccountNuker-NukeCleanser", tag:DoNotNuke: "True", tag:aws:cloudformation:logical-id: "NukeCodeBuildProject", tag:aws:cloudformation:stack-id: "arn:aws:cloudformation:eu-west-3:930842625961:stack/NukeCleanser/13f8e8d0-45b9-11ee-8f11-0a98f75d73f2", tag:aws:cloudformation:stack-name: "NukeCleanser", tag:owner: "OpsAdmin"] - would remove
+eu-west-3 - OpsWorksUserProfile - arn:aws:iam::930842625961:user/aws-nuke - Cannot delete OpsWorksUserProfile of calling User
+eu-west-3 - EC2NetworkACL - acl-0069589ac81dd9e6b - [ID: "acl-0069589ac81dd9e6b"] - cannot delete default VPC
+eu-west-3 - EC2SecurityGroup - sg-04136be8d98ab5073 - [Name: "launch-wizard-2"] - would remove
+eu-west-3 - EC2SecurityGroup - sg-09fc55b7a3ea19fe3 - [Name: "default"] - cannot delete group 'default'
+eu-west-3 - EC2SecurityGroup - sg-0cab98ff5b31b0f8f - [Name: "launch-wizard-1"] - would remove
+eu-west-3 - EC2VPC - vpc-0ec227719527381dd - [ID: "vpc-0ec227719527381dd", IsDefault: "true"] - would remove
+eu-west-3 - S3Bucket - s3://cf-templates-3tzpet0yjjg8-eu-west-3 - [Name: "cf-templates-3tzpet0yjjg8-eu-west-3"] - would remove
+eu-west-3 - S3Bucket - s3://nuke-account-cleanser-930842625961-eu-west-3-41d1db50 - [Name: "nuke-account-cleanser-930842625961-eu-west-3-41d1db50", tag:DoNotNuke: "True", tag:aws:cloudformation:logical-id: "NukeS3Bucket", tag:aws:cloudformation:stack-id: "arn:aws:cloudformation:eu-west-3:930842625961:stack/AwsClean/41d1db50-6444-11ee-9b48-0ac2cc48ec14", tag:aws:cloudformation:stack-name: "AwsClean", tag:owner: "OpsAdmin"] - would remove
+eu-west-3 - S3Bucket - s3://nuke-account-cleanser-config-930842625961-eu-west-3-13f8e8d0 - [Name: "nuke-account-cleanser-config-930842625961-eu-west-3-13f8e8d0", tag:DoNotNuke: "True", tag:aws:cloudformation:logical-id: "NukeS3Bucket", tag:aws:cloudformation:stack-id: "arn:aws:cloudformation:eu-west-3:930842625961:stack/NukeCleanser/13f8e8d0-45b9-11ee-8f11-0a98f75d73f2", tag:aws:cloudformation:stack-name: "NukeCleanser", tag:owner: "OpsAdmin"] - would remove
+eu-west-3 - S3Bucket - s3://nuke-account-cleanser-config-930842625961-eu-west-3-4519c290 - [Name: "nuke-account-cleanser-config-930842625961-eu-west-3-4519c290"] - would remove
+eu-west-3 - S3Bucket - s3://nuke-account-cleanser-config-930842625961-eu-west-3-49c89d40 - [Name: "nuke-account-cleanser-config-930842625961-eu-west-3-49c89d40", tag:DoNotNuke: "True", tag:owner: "OpsAdmin"] - would remove
+eu-west-3 - S3Bucket - s3://nuke-account-cleanser-config-930842625961-eu-west-3-6862d2b0 - [Name: "nuke-account-cleanser-config-930842625961-eu-west-3-6862d2b0", tag:DoNotNuke: "True", tag:owner: "OpsAdmin"] - would remove
+eu-west-3 - S3Bucket - s3://nuke-account-cleanser-config-930842625961-eu-west-3-eb24ba70 - [Name: "nuke-account-cleanser-config-930842625961-eu-west-3-eb24ba70", tag:DoNotNuke: "True", tag:owner: "OpsAdmin"] - would remove
+eu-west-3 - S3Bucket - s3://nuke-account-cleanser-config-930842625961-eu-west-3-ec46f5c0 - [Name: "nuke-account-cleanser-config-930842625961-eu-west-3-ec46f5c0"] - would remove
+eu-west-3 - S3Object - s3://cf-templates-3tzpet0yjjg8-eu-west-3/2023-08-10T143646.970Z1zu-nuke-cfn-stack.yaml - [Bucket: "cf-templates-3tzpet0yjjg8-eu-west-3", IsLatest: "true", Key: "2023-08-10T143646.970Z1zu-nuke-cfn-stack.yaml", VersionID: "null"] - would remove
+eu-west-3 - S3Object - s3://cf-templates-3tzpet0yjjg8-eu-west-3/2023-08-10T143927.117Zmt8-nuke-cfn-stack.yaml - [Bucket: "cf-templates-3tzpet0yjjg8-eu-west-3", IsLatest: "true", Key: "2023-08-10T143927.117Zmt8-nuke-cfn-stack.yaml", VersionID: "null"] - would remove
+eu-west-3 - S3Object - s3://cf-templates-3tzpet0yjjg8-eu-west-3/2023-08-10T144300.497Zjnm-nuke-cfn-stack.yaml - [Bucket: "cf-templates-3tzpet0yjjg8-eu-west-3", IsLatest: "true", Key: "2023-08-10T144300.497Zjnm-nuke-cfn-stack.yaml", VersionID: "null"] - would remove
+eu-west-3 - S3Object - s3://cf-templates-3tzpet0yjjg8-eu-west-3/2023-08-10T153118.510Z3xy-nuke_generic_config.yaml - [Bucket: "cf-templates-3tzpet0yjjg8-eu-west-3", IsLatest: "true", Key: "2023-08-10T153118.510Z3xy-nuke_generic_config.yaml", VersionID: "null"] - would remove
+eu-west-3 - S3Object - s3://cf-templates-3tzpet0yjjg8-eu-west-3/2023-08-10T153138.633Z3ol-nuke_generic_config.yaml - [Bucket: "cf-templates-3tzpet0yjjg8-eu-west-3", IsLatest: "true", Key: "2023-08-10T153138.633Z3ol-nuke_generic_config.yaml", VersionID: "null"] - would remove
+eu-west-3 - S3Object - s3://cf-templates-3tzpet0yjjg8-eu-west-3/2023-08-10T154522.713Zz2t-nuke-cfn-stack.yaml - [Bucket: "cf-templates-3tzpet0yjjg8-eu-west-3", IsLatest: "true", Key: "2023-08-10T154522.713Zz2t-nuke-cfn-stack.yaml", VersionID: "null"] - would remove
+eu-west-3 - S3Object - s3://cf-templates-3tzpet0yjjg8-eu-west-3/2023-08-10T154936.645Zbda-nuke-cfn-stack.yaml - [Bucket: "cf-templates-3tzpet0yjjg8-eu-west-3", IsLatest: "true", Key: "2023-08-10T154936.645Zbda-nuke-cfn-stack.yaml", VersionID: "null"] - would remove
+eu-west-3 - S3Object - s3://cf-templates-3tzpet0yjjg8-eu-west-3/2023-08-10T160802.898Z83w-nuke-cfn-stack.yaml - [Bucket: "cf-templates-3tzpet0yjjg8-eu-west-3", IsLatest: "true", Key: "2023-08-10T160802.898Z83w-nuke-cfn-stack.yaml", VersionID: "null"] - would remove
+eu-west-3 - S3Object - s3://cf-templates-3tzpet0yjjg8-eu-west-3/2023-08-10T164420.568Z2p0-nuke-cfn-stack.yaml - [Bucket: "cf-templates-3tzpet0yjjg8-eu-west-3", IsLatest: "true", Key: "2023-08-10T164420.568Z2p0-nuke-cfn-stack.yaml", VersionID: "null"] - would remove
+eu-west-3 - S3Object - s3://cf-templates-3tzpet0yjjg8-eu-west-3/2023-08-10T164920.949Zozo-nuke-cfn-stack.yaml - [Bucket: "cf-templates-3tzpet0yjjg8-eu-west-3", IsLatest: "true", Key: "2023-08-10T164920.949Zozo-nuke-cfn-stack.yaml", VersionID: "null"] - would remove
+eu-west-3 - S3Object - s3://nuke-account-cleanser-930842625961-eu-west-3-41d1db50/nuke_config_update.py - [Bucket: "nuke-account-cleanser-930842625961-eu-west-3-41d1db50", IsLatest: "true", Key: "nuke_config_update.py", VersionID: "null"] - would remove
+eu-west-3 - S3Object - s3://nuke-account-cleanser-930842625961-eu-west-3-41d1db50/nuke_generic_config.yaml - [Bucket: "nuke-account-cleanser-930842625961-eu-west-3-41d1db50", IsLatest: "true", Key: "nuke_generic_config.yaml", VersionID: "null"] - would remove
+eu-west-3 - S3Object - s3://nuke-account-cleanser-config-930842625961-eu-west-3-13f8e8d0/nuke_config_update.py - [Bucket: "nuke-account-cleanser-config-930842625961-eu-west-3-13f8e8d0", IsLatest: "true", Key: "nuke_config_update.py", VersionID: "null"] - would remove
+eu-west-3 - S3Object - s3://nuke-account-cleanser-config-930842625961-eu-west-3-13f8e8d0/nuke_generic_config.yaml - [Bucket: "nuke-account-cleanser-config-930842625961-eu-west-3-13f8e8d0", IsLatest: "true", Key: "nuke_generic_config.yaml", VersionID: "null"] - would remove
+eu-west-3 - S3Object - s3://nuke-account-cleanser-config-930842625961-eu-west-3-eb24ba70/nuke_config_update.py - [Bucket: "nuke-account-cleanser-config-930842625961-eu-west-3-eb24ba70", IsLatest: "true", Key: "nuke_config_update.py", VersionID: "null"] - would remove
+eu-west-3 - S3Object - s3://nuke-account-cleanser-config-930842625961-eu-west-3-eb24ba70/nuke_generic_config.yaml - [Bucket: "nuke-account-cleanser-config-930842625961-eu-west-3-eb24ba70", IsLatest: "true", Key: "nuke_generic_config.yaml", VersionID: "null"] - would remove
+Scan complete: 87 total, 53 nukeable, 34 filtered.
+
+The above resources would be deleted with the supplied configuration. Provide --no-dry-run to actually destroy resources.
