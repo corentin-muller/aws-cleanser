@@ -49,6 +49,7 @@ func ListS3Buckets(s *session.Session) ([]Resource, error) {
 						svc:          svc,
 						name:         aws.StringValue(bucket.Name),
 						creationDate: aws.TimeValue(bucket.CreationDate),
+						lastModified: aws.TimeValue(bucket.LastModified),
 						tags:         make([]*s3.Tag, 0),
 					})
 				}
@@ -60,6 +61,7 @@ func ListS3Buckets(s *session.Session) ([]Resource, error) {
 			svc:          svc,
 			name:         aws.StringValue(bucket.Name),
 			creationDate: aws.TimeValue(bucket.CreationDate),
+			lastModified: aws.TimeValue(bucket.LastModified),
 			tags:         tags.TagSet,
 		})
 	}
