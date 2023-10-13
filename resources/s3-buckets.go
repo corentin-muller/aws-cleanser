@@ -24,6 +24,7 @@ type S3Bucket struct {
 	svc          *s3.S3
 	name         string
 	creationDate time.Time
+	lastModified time.Time
 	tags         []*s3.Tag
 }
 
