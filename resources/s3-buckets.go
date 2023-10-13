@@ -146,6 +146,7 @@ func (e *S3Bucket) Properties() types.Properties {
 	properties := types.NewProperties().
 		Set("Name", e.name).
 		Set("CreationDate", e.creationDate.Format(time.RFC3339))
+		Set("CreationDate", e.lastModified.Format(time.RFC3339))
 
 	for _, tag := range e.tags {
 		properties.SetTag(tag.Key, tag.Value)

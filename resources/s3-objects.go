@@ -69,7 +69,7 @@ func ListS3Objects(sess *session.Session) ([]Resource, error) {
 				resources = append(resources, &S3Object{
 					svc:          svc,
 					bucket:       aws.StringValue(bucket.Name),
-					creationDate: aws.TimeValue(out.CreationDate),
+					creationDate: aws.TimeValue(bucket.CreationDate),
 					LastModified: aws.TimeValue(bucket.LastModified),
 					key:          *out.Key,
 					versionID:    out.VersionId,
