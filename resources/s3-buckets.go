@@ -24,7 +24,6 @@ type S3Bucket struct {
 	svc          *s3.S3
 	name         string
 	creationDate time.Time
-	lastModified time.Time
 	tags         []*s3.Tag
 }
 
@@ -49,7 +48,6 @@ func ListS3Buckets(s *session.Session) ([]Resource, error) {
 						svc:          svc,
 						name:         aws.StringValue(bucket.Name),
 						creationDate: aws.TimeValue(bucket.CreationDate),
-						lastModified: aws.TimeValue(bucket.LastModified),
 						tags:         make([]*s3.Tag, 0),
 					})
 				}
@@ -61,7 +59,6 @@ func ListS3Buckets(s *session.Session) ([]Resource, error) {
 			svc:          svc,
 			name:         aws.StringValue(bucket.Name),
 			creationDate: aws.TimeValue(bucket.CreationDate),
-			lastModified: aws.TimeValue(bucket.LastModified),
 			tags:         tags.TagSet,
 		})
 	}
@@ -147,8 +144,7 @@ func (e *S3Bucket) RemoveAllObjects() error {
 func (e *S3Bucket) Properties() types.Properties {
 	properties := types.NewProperties().
 		Set("Name", e.name).
-		Set("CreationDate", e.creationDate.Format(time.RFC3339)).
-		Set("LastModified", e.lastModified.Format(time.RFC3339))
+		Set("CreationDate", e.creationDate.Format(time.RFC3339))
 
 	for _, tag := range e.tags {
 		properties.SetTag(tag.Key, tag.Value)
