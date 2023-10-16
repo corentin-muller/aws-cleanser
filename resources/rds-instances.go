@@ -14,6 +14,7 @@ type RDSInstance struct {
 	svc      *rds.RDS
 	instance *rds.DBInstance
 	tags     []*rds.Tag
+	createdTime time.Time
 
 	featureFlags config.FeatureFlags
 }
@@ -44,6 +45,7 @@ func ListRDSInstances(sess *session.Session) ([]Resource, error) {
 		resources = append(resources, &RDSInstance{
 			svc:      svc,
 			instance: instance,
+			CreatedTime: aws.TimeValue(instance.InstanceCreateTime),
 			tags:     tags.TagList,
 		})
 	}
@@ -89,6 +91,7 @@ func (i *RDSInstance) Properties() types.Properties {
 		Set("Engine", i.instance.Engine).
 		Set("EngineVersion", i.instance.EngineVersion).
 		Set("MultiAZ", i.instance.MultiAZ).
+		Set("InstanceCreateTime", e.instanceCreate)
 		Set("PubliclyAccessible", i.instance.PubliclyAccessible)
 
 	if i.instance.InstanceCreateTime != nil {

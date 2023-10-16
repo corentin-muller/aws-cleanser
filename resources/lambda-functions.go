@@ -9,6 +9,7 @@ import (
 type LambdaFunction struct {
 	svc          *lambda.Lambda
 	functionName *string
+	lastModified time.Time
 	tags         map[string]*string
 }
 
@@ -47,6 +48,7 @@ func ListLambdaFunctions(sess *session.Session) ([]Resource, error) {
 		resources = append(resources, &LambdaFunction{
 			svc:          svc,
 			functionName: function.FunctionName,
+			lastModified: aws.TimeValue(function.LastModified),
 			tags:         tags.Tags,
 		})
 	}
@@ -57,6 +59,7 @@ func ListLambdaFunctions(sess *session.Session) ([]Resource, error) {
 func (f *LambdaFunction) Properties() types.Properties {
 	properties := types.NewProperties()
 	properties.Set("Name", f.functionName)
+	properties.Set("LastModified", f.lastModified)
 
 	for key, val := range f.tags {
 		properties.SetTag(&key, val)
