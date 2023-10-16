@@ -51,7 +51,7 @@ func ListLambdaFunctions(sess *session.Session) ([]Resource, error) {
 		resources = append(resources, &LambdaFunction{
 			svc:          svc,
 			functionName: function.FunctionName,
-			lastModified: aws.TimeValue(function.LastModified),
+			lastModified: function.LastModified,
 			tags:         tags.Tags,
 		})
 	}

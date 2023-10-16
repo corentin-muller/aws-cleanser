@@ -91,7 +91,7 @@ func (i *RDSInstance) Properties() types.Properties {
 		Set("Engine", i.instance.Engine).
 		Set("EngineVersion", i.instance.EngineVersion).
 		Set("MultiAZ", i.instance.MultiAZ).
-		Set("InstanceCreateTime", i.instance.createdTime).
+		Set("InstanceCreateTime", i.instance.InstanceCreateTime).
 		Set("PubliclyAccessible", i.instance.PubliclyAccessible)
 
 	if i.instance.InstanceCreateTime != nil {
