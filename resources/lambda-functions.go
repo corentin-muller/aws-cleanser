@@ -3,7 +3,6 @@ package resources
 import (
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/lambda"
 	"github.com/rebuy-de/aws-nuke/v2/pkg/types"
@@ -12,7 +11,7 @@ import (
 type LambdaFunction struct {
 	svc          *lambda.Lambda
 	functionName *string
-	lastModified time.Time
+	lastModified *string
 	tags         map[string]*string
 }
 
