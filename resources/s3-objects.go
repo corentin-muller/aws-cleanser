@@ -108,15 +108,13 @@ func (e *S3Object) Remove() error {
 
 func (e *S3Object) Properties() types.Properties {
 	currentDate := time.Now()
-		daysDifference := currentDate.Sub(dateToCheck).Hours() / 24
-
+	daysDifference := currentDate.Sub(dateToCheck).Hours() / 24
+	resource_age := "is younger than 30 days"
 	// Check if the date is older than 30 days
 	if daysDifference > 30 {
-		Set("Age", "Is older than 30 days")
-	} else {
-		Set("Age", "Is younger than 30 days")
-	}
+		resource_age := "is older than 30 days"
 	return types.NewProperties().
+		Set("Age", resource_age)
 		Set("Bucket", e.bucket).
 		Set("Key", e.key).
 		Set("VersionID", e.versionID).
