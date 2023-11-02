@@ -114,7 +114,7 @@ func (e *S3Object) Properties() types.Properties {
 	if daysDifference > 30 {
 		resource_age := "is older than 30 days"
 	return types.NewProperties().
-		Set("Age", resource_age)
+		Set("Age", resource_age).
 		Set("Bucket", e.bucket).
 		Set("Key", e.key).
 		Set("VersionID", e.versionID).
