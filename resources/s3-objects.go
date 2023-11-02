@@ -12,6 +12,7 @@ import (
 
 type S3Object struct {
 	svc          *s3.S3
+	age          string
 	bucket       string
 	creationDate time.Time
 	lastModified time.Time
@@ -106,6 +107,15 @@ func (e *S3Object) Remove() error {
 }
 
 func (e *S3Object) Properties() types.Properties {
+	currentDate := time.Now()
+		daysDifference := currentDate.Sub(dateToCheck).Hours() / 24
+
+	// Check if the date is older than 30 days
+	if daysDifference > 30 {
+		Set("Age", "Is older than 30 days")
+	} else {
+		Set("Age", "Is younger than 30 days")
+	}
 	return types.NewProperties().
 		Set("Bucket", e.bucket).
 		Set("Key", e.key).

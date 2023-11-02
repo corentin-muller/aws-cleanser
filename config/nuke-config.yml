@@ -47,6 +47,8 @@ accounts:
 
 resource-types:
   # don't nuke IAM users
+  targets:
+  - EC2*
   excludes:
   - IAMGroup
   - IAMGroupPolicy

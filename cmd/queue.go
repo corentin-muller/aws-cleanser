@@ -33,7 +33,11 @@ type Item struct {
 func (i *Item) Print() {
 	switch i.State {
 	case ItemStateNew:
-		Log(i.Region, i.Type, i.Resource, ReasonWaitPending, "would remove")
+		if i, ok := {
+			Log(i.Region, i.Type, i.Resource, ReasonWaitPending, i.Age, "would remove")
+		} else {
+			Log(i.Region, i.Type, i.Resource, ReasonWaitPending, "is older than 30 days", "would remove")
+		}
 	case ItemStatePending:
 		Log(i.Region, i.Type, i.Resource, ReasonWaitPending, "triggered remove")
 	case ItemStateWaiting:
