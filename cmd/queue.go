@@ -38,9 +38,6 @@ func (i *Item) Print() {
 			ageMessage = i.Age
 		}
 		Log(i.Region, i.Type, i.Resource, ReasonWaitPending, ageMessage, "would remove")
-		} else {
-			Log(i.Region, i.Type, i.Resource, ReasonWaitPending, ageMessage, "would remove")
-		}
 	case ItemStatePending:
 		Log(i.Region, i.Type, i.Resource, ReasonWaitPending, "triggered remove")
 	case ItemStateWaiting:
