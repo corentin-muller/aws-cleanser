@@ -34,7 +34,7 @@ func (i *Item) Print() {
 	switch i.State {
 	case ItemStateNew:
 		ageMessage := "would remove - is older than 30 days"
-		if i.Resource == "S3Object" {
+		if i.Type == "S3Object" {
 			ageMessage = i.Age
 		}
 		Log(i.Region, i.Type, i.Resource, ReasonWaitPending, ageMessage)
