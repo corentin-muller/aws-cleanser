@@ -109,10 +109,10 @@ func (e *S3Object) Remove() error {
 func (e *S3Object) Properties() types.Properties {
 	currentDate := time.Now()
 	daysDifference := currentDate.Sub(e.creationDate).Hours() / 24
-	resource_age := "is younger than 30 days"
+	resource_age := "would remove - is younger than 30 days"
 	// Check if the date is older than 30 days
 	if daysDifference > 30 {
-		resource_age = "is older than 30 days"
+		resource_age = "would remove - is older than 30 days"
 	}
 	return types.NewProperties().
 		Set("Age", resource_age).

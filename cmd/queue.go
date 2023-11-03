@@ -33,11 +33,11 @@ type Item struct {
 func (i *Item) Print() {
 	switch i.State {
 	case ItemStateNew:
-		ageMessage := "is older than 30 days"
-		if i.Age != "" {
+		ageMessage := "would remove - is older than 30 days"
+		if i.Resource == "S3Object" {
 			ageMessage = i.Age
 		}
-		Log(i.Region, i.Type, i.Resource, ReasonWaitPending, ageMessage, "would remove")
+		Log(i.Region, i.Type, i.Resource, ReasonWaitPending, ageMessage)
 	case ItemStatePending:
 		Log(i.Region, i.Type, i.Resource, ReasonWaitPending, "triggered remove")
 	case ItemStateWaiting:
