@@ -92,7 +92,7 @@ func (e *IAMRole) Remove() error {
 
 func (role *IAMRole) Properties() types.Properties {
 	properties := types.NewProperties().
-		Set("CreateDate", role.role.CreateDate.Format(time.RFC3339)).
+		Set("CreationDate", role.role.CreateDate.Format(time.RFC3339)).
 		Set("LastUsedDate", getLastUsedDate(role.role, time.RFC3339)).
 		Set("Name", role.name).
 		Set("Path", role.path)

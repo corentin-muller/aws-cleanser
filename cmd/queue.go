@@ -33,10 +33,13 @@ type Item struct {
 func (i *Item) Print() {
 	switch i.State {
 	case ItemStateNew:
+		currentDate := time.Now()
 		creationdate, err := i.GetProperty("CreationDate")
 		if err != nil {
 			ageMessage := "would remove - is older than 30 days"
 		} else {
+			daysDifference := currentDate.Sub(creationdate).Hours() / 24
+			// Check if the date is older than 30 days
 			if creationdate > 30 {
 				ageMessage := "would remove - is older than 30 days"
 			} else {
