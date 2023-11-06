@@ -82,7 +82,7 @@ func (j *SignerSigningJob) Remove() error {
 func (j *SignerSigningJob) Properties() types.Properties {
 	properties := types.NewProperties()
 	properties.Set("JobId", j.jobId)
-	properties.Set("CreatedAt", j.createdAt.Format(time.RFC3339))
+	properties.Set("CreationDate", j.createdAt)
 	properties.Set("ProfileName", j.profileName)
 	properties.Set("ProfileVersion", j.profileVersion)
 	properties.Set("PlatformId", j.platformId)

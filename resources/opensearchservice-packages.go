@@ -66,7 +66,7 @@ func (o *OSPackage) Properties() types.Properties {
 	properties := types.NewProperties()
 	properties.Set("PackageID", o.packageID)
 	properties.Set("PackageName", o.packageName)
-	properties.Set("CreatedTime", o.createdTime.Format(time.RFC3339))
+	properties.Set("CreationDate", o.createdTime)
 	return properties
 }
 

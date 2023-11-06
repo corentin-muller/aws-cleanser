@@ -99,7 +99,7 @@ func (ng *EKSNodegroup) Properties() types.Properties {
 	properties.Set("Cluster", ng.nodegroup.ClusterName)
 	properties.Set("Profile", ng.nodegroup.NodegroupName)
 	if ng.nodegroup.CreatedAt != nil {
-		properties.Set("CreatedAt", ng.nodegroup.CreatedAt.Format(time.RFC3339))
+		properties.Set("CreationDate", ng.nodegroup.CreatedAt)
 	}
 	for k, v := range ng.nodegroup.Tags {
 		properties.SetTag(&k, v)

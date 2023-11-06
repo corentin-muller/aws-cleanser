@@ -66,7 +66,7 @@ func (asg *AutoScalingGroup) Properties() types.Properties {
 		properties.SetTag(tag.Key, tag.Value)
 	}
 
-	properties.Set("CreatedTime", asg.group.CreatedTime.Format(time.RFC3339))
+	properties.Set("CreationDate", asg.group.CreatedTime)
 	properties.Set("Name", asg.group.AutoScalingGroupName)
 
 	return properties

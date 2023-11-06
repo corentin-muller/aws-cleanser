@@ -67,7 +67,7 @@ func (r *ECRRepository) Filter() error {
 
 func (r *ECRRepository) Properties() types.Properties {
 	properties := types.NewProperties().
-		Set("CreatedTime", r.createdTime.Format(time.RFC3339))
+		Set("CreationDate", r.createdTime)
 
 	for _, t := range r.tags {
 		properties.SetTag(t.Key, t.Value)

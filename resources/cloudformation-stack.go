@@ -192,7 +192,7 @@ func (cfs *CloudFormationStack) waitForStackToStabilize(currentStatus string) er
 func (cfs *CloudFormationStack) Properties() types.Properties {
 	properties := types.NewProperties()
 	properties.Set("Name", cfs.stack.StackName)
-	properties.Set("CreationTime", cfs.stack.CreationTime.Format(time.RFC3339))
+	properties.Set("CreationDate", cfs.stack.CreationTime)
 	if cfs.stack.LastUpdatedTime == nil {
 		properties.Set("LastUpdatedTime", cfs.stack.CreationTime.Format(time.RFC3339))
 	} else {

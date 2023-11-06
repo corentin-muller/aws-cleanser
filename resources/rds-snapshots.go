@@ -87,7 +87,7 @@ func (i *RDSSnapshot) Properties() types.Properties {
 		Set("SnapshotType", i.snapshot.SnapshotType).
 		Set("Status", i.snapshot.Status).
 		Set("AvailabilityZone", i.snapshot.AvailabilityZone).
-		Set("CreatedTime", i.snapshot.SnapshotCreateTime.Format(time.RFC3339))
+		Set("CreationDate", i.snapshot.SnapshotCreateTime)
 
 	for _, tag := range i.tags {
 		properties.SetTag(tag.Key, tag.Value)

@@ -87,7 +87,7 @@ func (l *QLDBLedger) Properties() types.Properties {
 	properties.Set("Name", l.ledger.Name)
 	properties.Set("DeletionProtection", l.ledger.DeletionProtection)
 	properties.Set("Arn", l.ledger.Arn)
-	properties.Set("CreationDate", l.ledger.CreationDateTime.Format(time.RFC3339))
+	properties.Set("CreationDate", l.ledger.CreationDateTime)
 	properties.Set("State", l.ledger.State)
 	properties.Set("PermissionsMode", l.ledger.PermissionsMode)
 	properties.Set("EncryptionDescription", l.ledger.EncryptionDescription)

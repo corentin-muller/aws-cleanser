@@ -55,7 +55,7 @@ func (i *ElasticacheReplicationGroup) Properties() types.Properties {
 	properties.Set("ID", i.groupID)
 
 	if i.createTime != nil {
-		properties.Set("CreateTime", i.createTime.Format(time.RFC3339))
+		properties.Set("CreationDate", i.createTime)
 	}
 
 	return properties

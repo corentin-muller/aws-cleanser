@@ -64,7 +64,7 @@ func (f *EKSCluster) Remove() error {
 
 func (f *EKSCluster) Properties() types.Properties {
 	properties := types.NewProperties()
-	properties.Set("CreatedAt", f.cluster.CreatedAt.Format(time.RFC3339))
+	properties.Set("CreationDate", f.cluster.CreatedAt)
 	for key, value := range f.cluster.Tags {
 		properties.SetTag(&key, value)
 	}

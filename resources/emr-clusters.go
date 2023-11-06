@@ -52,7 +52,7 @@ func ListEMRClusters(sess *session.Session) ([]Resource, error) {
 
 func (f *EMRCluster) Properties() types.Properties {
 	properties := types.NewProperties().
-		Set("CreationDate", f.cluster.Status.Timeline.CreationDateTime.Format(time.RFC3339))
+		Set("CreationDate", f.cluster.Status.Timeline.CreationDateTime)
 	return properties
 }
 

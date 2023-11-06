@@ -95,7 +95,7 @@ func (i *RDSInstance) Properties() types.Properties {
 		Set("PubliclyAccessible", i.instance.PubliclyAccessible)
 
 	if i.instance.InstanceCreateTime != nil {
-		properties.Set("InstanceCreateTime", i.instance.InstanceCreateTime.Format(time.RFC3339))
+		properties.Set("CreationDate", i.instance.InstanceCreateTime)
 	}
 
 	for _, tag := range i.tags {

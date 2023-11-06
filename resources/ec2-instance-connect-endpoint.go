@@ -78,7 +78,7 @@ func (i *EC2InstanceConnectEndpoint) Properties() types.Properties {
 	properties := types.NewProperties()
 	properties.Set("ID", i.id)
 	properties.Set("AZ", i.az)
-	properties.Set("CreatedAt", i.createdAt.Format(time.RFC3339))
+	properties.Set("CreationDate", i.createdAt)
 	properties.Set("DNSName", i.dnsName)
 	properties.Set("FIPSDNSName", i.fipsDNSName)
 	properties.Set("OwnerID", i.ownerID)

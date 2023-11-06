@@ -69,6 +69,6 @@ func (f *CloudFrontPublicKey) Properties() types.Properties {
 	properties := types.NewProperties()
 	properties.Set("ID", f.ID)
 	properties.Set("Name", f.name)
-	properties.Set("CreatedTime", f.createdTime.Format(time.RFC3339))
+	properties.Set("CreationDate", f.createdTime)
 	return properties
 }

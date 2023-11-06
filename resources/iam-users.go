@@ -77,7 +77,7 @@ func (e *IAMUser) Properties() types.Properties {
 	properties.Set("Name", e.name)
 
 	if e.createDate != nil {
-		properties.Set("CreationDate", e.createDate.Format(time.RFC3339))
+		properties.Set("CreationDate", e.createDate)
 	}
 	if e.passwordLastUsed != nil {
 		properties.Set("PasswordLastUsed", e.passwordLastUsed.Format(time.RFC3339))
