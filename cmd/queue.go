@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/rebuy-de/aws-nuke/v2/resources"
 )
@@ -40,7 +41,7 @@ func (i *Item) Print() {
 		} else {
 			daysDifference := currentDate.Sub(creationdate).Hours() / 24
 			// Check if the date is older than 30 days
-			if creationdate > 30 {
+			if daysDifference > 30 {
 				ageMessage := "would remove - is older than 30 days"
 			} else {
 				ageMessage := "would remove - is younger than 30 days"
