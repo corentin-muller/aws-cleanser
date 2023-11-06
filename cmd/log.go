@@ -44,7 +44,7 @@ func Log(region *Region, resourceType string, r resources.Resource, c color.Colo
 	ColorRegion.Printf("{'region': '%s'", region.Name)
 	fmt.Printf(", ")
 	ColorResourceType.Printf("'resource': '%s'", resourceType)
-	fmt.Printf(" - ")
+	fmt.Printf(", 'name': ")
 
 	rString, ok := r.(resources.LegacyStringer)
 	if ok {
