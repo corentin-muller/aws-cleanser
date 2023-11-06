@@ -48,6 +48,7 @@ func (i *Item) Print() {
 			} else {
 				ageMessage = "would remove - is younger than 30 days"
 			}
+			Log(i.Region, i.Type, i.Resource, ReasonWaitPending, ageMessage)
 		}
 	case ItemStatePending:
 		Log(i.Region, i.Type, i.Resource, ReasonWaitPending, "triggered remove")
