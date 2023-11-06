@@ -49,7 +49,7 @@ func Log(region *Region, resourceType string, r resources.Resource, c color.Colo
 	rString, ok := r.(resources.LegacyStringer)
 	if ok {
 		ColorResourceID.Print(rString.String())
-		fmt.Printf(" - ")
+		fmt.Printf("} - ")
 	}
 
 	rProp, ok := r.(resources.ResourcePropertyGetter)
