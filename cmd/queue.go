@@ -38,16 +38,17 @@ func (i *Item) Print() {
 		creationdate, err := i.GetProperty("CreationDate")
 		if err != nil {
 			ageMessage := "would remove - is older than 30 days"
+			Log(i.Region, i.Type, i.Resource, ReasonWaitPending, ageMessage)
 		} else {
 			daysDifference := currentDate.Sub(creationdate).Hours() / 24
+			var ageMessage string
 			// Check if the date is older than 30 days
 			if daysDifference > 30 {
-				ageMessage := "would remove - is older than 30 days"
+				ageMessage = "would remove - is older than 30 days"
 			} else {
-				ageMessage := "would remove - is younger than 30 days"
+				ageMessage = "would remove - is younger than 30 days"
 			}
 		}
-		Log(i.Region, i.Type, i.Resource, ReasonWaitPending, ageMessage)
 	case ItemStatePending:
 		Log(i.Region, i.Type, i.Resource, ReasonWaitPending, "triggered remove")
 	case ItemStateWaiting:
