@@ -3,7 +3,6 @@ package resources
 import (
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/emr"
