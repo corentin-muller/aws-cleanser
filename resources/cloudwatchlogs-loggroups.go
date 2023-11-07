@@ -96,7 +96,7 @@ func (f *CloudWatchLogsLogGroup) String() string {
 func (f *CloudWatchLogsLogGroup) Properties() types.Properties {
 	properties := types.NewProperties().
 		Set("logGroupName", f.logGroup.LogGroupName).
-		Set("CreatedTime", f.logGroup.CreationTime).
+		Set("CreationDate", f.logGroup.CreationTime).
 		Set("LastEvent", f.lastEvent)
 
 	for k, v := range f.tags {
