@@ -41,10 +41,10 @@ func Sorted(m map[string]string) string {
 }
 
 func Log(region *Region, resourceType string, r resources.Resource, c color.Color, msg string) {
-	ColorRegion.Printf("{'region': '%s'", region.Name)
+	ColorRegion.Printf("{\"region\": \"%s\"", region.Name)
 	fmt.Printf(", ")
-	ColorResourceType.Printf("'resource': '%s'", resourceType)
-	fmt.Printf(", 'name': ")
+	ColorResourceType.Printf("\"resource\": \"%s\"", resourceType)
+	fmt.Printf(", \"name\": ")
 
 	rString, ok := r.(resources.LegacyStringer)
 	if ok {
