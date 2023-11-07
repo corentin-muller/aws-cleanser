@@ -48,7 +48,7 @@ func ListEC2Snapshots(sess *session.Session) ([]Resource, error) {
 
 func (e *EC2Snapshot) Properties() types.Properties {
 	properties := types.NewProperties()
-	properties.Set("StartTime", e.startTime.Format(time.RFC3339))
+	properties.Set("CreationDate", e.startTime)
 
 	for _, tagValue := range e.tags {
 		properties.Set(fmt.Sprintf("tag:%v", *tagValue.Key), tagValue.Value)
