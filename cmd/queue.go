@@ -36,11 +36,14 @@ func (i *Item) Print() {
 	case ItemStateNew:
 		currentDate := time.Now()
 		creationdate, err := i.GetProperty("CreationDate")
+		
 		if err != nil {
 			ageMessage := "would remove - is older than 30 days"
 			Log(i.Region, i.Type, i.Resource, ReasonWaitPending, ageMessage)
 		} else {
-			daysDifference := currentDate.Sub(creationdate).Hours() / 24
+			creationDate, err1 := parseTime(creationdate)
+			fmt.Println(err1)
+			daysDifference := currentDate.Sub(creationDate).Hours() / 24
 			var ageMessage string
 			// Check if the date is older than 30 days
 			if daysDifference > 30 {
@@ -61,6 +64,27 @@ func (i *Item) Print() {
 	case ItemStateFinished:
 		Log(i.Region, i.Type, i.Resource, ReasonSuccess, "removed")
 	}
+}
+
+func parseTime(input interface{}) (time.Time, error) {
+    if t, ok := input.(time.Time); ok {
+        // If the input is already a time.Time, return it.
+        return t, nil
+    }
+
+    // If the input is not a time.Time, try to parse it as a string.
+    strInput, ok := input.(string)
+    if !ok {
+        return time.Time{}, fmt.Errorf("Input is not a time.Time or string")
+    }
+
+    layout := time.RFC3339
+    parsedTime, err := time.Parse(layout, strInput)
+    if err != nil {
+        return time.Time{}, err
+    }
+
+    return parsedTime, nil
 }
 
 // List gets all resource items of the same resource type like the Item.
