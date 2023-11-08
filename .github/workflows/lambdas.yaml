@@ -23,8 +23,8 @@ jobs:
 
       - name: Package Lambda function
         run: |
-          pip install -r ..lambdas/aws-cleanser/requirements.txt --target .
-          zip -r ../lambda_function.zip lambdas/aws-cleanser/.
+          pip install -r ./lambdas/aws-cleanser/requirements.txt --target .
+          zip -r ./lambda_function.zip lambdas/aws-cleanser/.
           zip -jr aws-cleanser.zip ./lambdas/aws-cleanser/.
       - run: aws lambda update-function-code --function-name=aws-cleanser --zip-file=fileb://aws-cleanser.zip
  
