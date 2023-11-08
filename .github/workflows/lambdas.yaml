@@ -4,45 +4,35 @@ on:
     branches:
       - main
 jobs:
-  lambda1:
+  deploy:
+    strategy:
+      matrix:
+        lambda_function:
+          - update-config
+          - aws-cleanser
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v3
         with:
           python-version: 3.11
       - name: Install Python dependencies
-        uses: py-actions/py-dependency-install@v4
-        with:
-          path: ./lambdas/aws-cleanser/requirements.txt
+        run: |
+          pip install -r ./lambdas/${{ matrix.lambda_function }}/requirements.txt
+        working-directory: ./lambdas/${{ matrix.lambda_function }}
+
+      - name: Create deployment package
+        run: |
+           zip -r deployment_package.zip ./lambdas/${{ matrix.lambda_function }}/
+        working-directory: ./lambdas/${{ matrix.lambda_function }}
+
       - uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-3
 
-      - name: Package Lambda function
-        run: |
-          pip install -r ./lambdas/aws-cleanser/requirements.txt --target ./lambdas/aws-cleanser/
-          zip -r ./aws-cleanser.zip lambdas/aws-cleanser/.
-          # zip -jr aws-cleanser.zip ./lambdas/aws-cleanser/.
-      - run: aws lambda update-function-code --function-name=aws-cleanser --zip-file=fileb://aws-cleanser.zip
- 
-  lambda2:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v3
-        with:
-          python-version: 3.11
-      - name: Install Python dependencies
-        uses: py-actions/py-dependency-install@v4
-        with:
-          path: ./lambdas/update-config/requirements.txt
-      - uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-3
-      - run: zip -jr update-config.zip ./lambdas/update-config/.
-      - run: aws lambda update-function-code --function-name=update-config  --zip-file=fileb://update-config.zip
+      - name: Deploy to lambda
+        run: aws lambda update-function-code --function-name=${{ matrix.lambda_function }} --zip-file=fileb://${{ matrix.lambda_function }}/.deployment_package.zip
