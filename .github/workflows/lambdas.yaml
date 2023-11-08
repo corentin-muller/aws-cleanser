@@ -20,7 +20,15 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-3
-      - run: zip -jr aws-cleanser.zip ./lambdas/aws-cleanser/.
+
+      - name: Package Lambda function
+        run: |
+          mkdir package
+          cp -r src/* package/
+          cd package
+          pip install -r ..lambdas/aws-cleanser/requirements.txt --target .
+          zip -r ../lambda_function.zip lambdas/aws-cleanser/.
+          zip -jr aws-cleanser.zip ./lambdas/aws-cleanser/.
       - run: aws lambda update-function-code --function-name=aws-cleanser --zip-file=fileb://aws-cleanser.zip
  
   lambda2:
