@@ -1,4 +1,4 @@
 pandas
 boto3
-yaml
+pyyaml
 json
