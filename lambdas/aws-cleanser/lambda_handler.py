@@ -8,7 +8,6 @@ S3_BUCKET = "nuke-account-cleanser-930842625961-eu-west-3-41d1db50"
 def lambda_handler(event, context):
     print("start")
     s3 = boto3.client("s3")
-
       
     try:
         # Download the file from S3
@@ -22,17 +21,18 @@ def lambda_handler(event, context):
     except Exception as e:
         print(f"Error: {e}")  
 
-    region_clean = event["region"]
+    region_clean = event.get("region", "eu-west-3")
     resource_clean = event["resource"]
     service_name = event["name"]
-    key = event["attribute"]
+    dry_run = event.get("dry_run", "true")
+    version = event.get("version", "8.1")
     
     configfile["regions"] = [region_clean]
     configfile["resource-types"] = {"targets": [resource_clean]}
     configfile["accounts"] = {
         "ACCOUNT": {
             "filters": {
-                resource_clean: [{'property': key, 'value': service_name, 'invert': 'true'}]
+                resource_clean: [{'type': "exact", 'value': service_name, 'invert': 'true'}]
             }
         }
     }
@@ -45,10 +45,10 @@ def lambda_handler(event, context):
     )
     sf = boto3.client('stepfunctions', region_name = 'eu-west-3')
     input_dict = {"InputPayLoad": {
-        "nuke_dry_run": "true",
-        "nuke_version": "v4.4",
+        "nuke_dry_run": dry_run,
+        "nuke_version": version,
         "region_list": [region_clean]
-    }
+        }
     }
     response = sf.start_execution(
     stateMachineArn = 'arn:aws:states:eu-west-3:930842625961:stateMachine:aws-account-clean-codebuild-state-machine',
