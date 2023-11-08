@@ -8,6 +8,7 @@ S3_BUCKET = "nuke-account-cleanser-930842625961-eu-west-3-41d1db50"
 def lambda_handler(event, context):
     print("start")
     s3 = boto3.client("s3")
+    resource = event["resource"]
       
     try:
         # Download the file from S3
