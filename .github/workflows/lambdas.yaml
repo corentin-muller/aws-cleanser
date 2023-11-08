@@ -20,12 +20,11 @@ jobs:
           python-version: 3.11
       - name: Install Python dependencies
         run: |
-          pip install -r lambdas/${{ matrix.lambda_function }}/requirements.txt
+          pip install -r ${{ matrix.lambda_function }}/requirements.txt
         working-directory: ${{ github.workspace }}
 
       - name: Create deployment package
         run: |
-          cd lambdas
           zip -r deployment_package_${{ matrix.lambda_function }}.zip ${{ matrix.lambda_function }}/
         working-directory: ${{ github.workspace }}
 
@@ -36,4 +35,4 @@ jobs:
           aws-region: eu-west-3
 
       - name: Deploy to lambda
-        run: aws lambda update-function-code --function-name=${{ matrix.lambda_function }} --zip-file=fileb://lambdas/deployment_package_${{ matrix.lambda_function }}.zip
+        run: aws lambda update-function-code --function-name=${{ matrix.lambda_function }} --zip-file=fileb://deployment_package_${{ matrix.lambda_function }}.zip
