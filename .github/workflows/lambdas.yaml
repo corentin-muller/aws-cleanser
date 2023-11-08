@@ -20,7 +20,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-3
-      - run: zip -j aws-cleanser.zip ./lambdas/aws-cleanser/lambda_function.py
+      - run: zip -j aws-cleanser.zip ./lambdas/aws-cleanser/
       - run: aws lambda update-function-code --function-name=aws-cleanser --zip-file=fileb://aws-cleanser.zip
  
   lambda2:
@@ -39,5 +39,5 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-3
-      - run: zip -j update-config.zip ./lambdas/update-config/lambda_function.py
+      - run: zip -j update-config.zip ./lambdas/update-config/
       - run: aws lambda update-function-code --function-name=update-config  --zip-file=fileb://update-config.zip
