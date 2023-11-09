@@ -2,7 +2,6 @@ import boto3
 import json
 import yaml
 
-{'account-blocklist': [123456789012], 'accounts': {'ACCOUNT': {'filters': {'S3Bucket': [{'invert': 'true', 'type': 'exact', 'value': 'nuke-account-cleanser-config-930842625961-eu-west-3-4519c290'}]}}}, 'regions': ['eu-west-3'], 'resource-types': {'targets': ['S3Bucket']}}
 
 S3_OBJECT = "nuke_generic_config.yaml"
 S3_BUCKET = "nuke-account-cleanser-930842625961-eu-west-3-41d1db50"
@@ -39,6 +38,12 @@ def lambda_handler(event, context):
                 "value": identifier
         }
         
+    config_output = yaml.dump(configfile)
+    s3.put_object(
+        Bucket=S3_BUCKET, 
+        Key=S3_OBJECT,
+        Body=config_output
+    )
     return {
         'statusCode': 200,
         'body': json.dumps('Hello from Lambda!')
