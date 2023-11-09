@@ -20,6 +20,7 @@ def lambda_handler(event, context):
             configfile = yaml.safe_load(response['Body'])
             print(configfile)
         except yaml.YAMLError as exc:
+            print(exc)
             return exc
     except Exception as e:
         print(f"Error: {e}")
