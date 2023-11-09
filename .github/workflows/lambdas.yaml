@@ -22,7 +22,7 @@ jobs:
         run: |
           cd ${{ matrix.lambda_function }}
           mkdir package
-          pip install -r ${{ matrix.lambda_function }}/requirements.txt --target ./package
+          pip install -r requirements.txt --target ./package
           working-directory: ${{ github.workspace }}
 
       - name: Create deployment package
