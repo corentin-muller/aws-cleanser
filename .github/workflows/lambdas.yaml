@@ -36,4 +36,4 @@ jobs:
           aws-region: eu-west-3
 
       - name: Deploy to lambda
-        run: aws lambda update-function-code --function-name=${{ matrix.lambda_function }} --zip-file=fileb://deployment_package_${{ matrix.lambda_function }}.zip
+        run: aws lambda update-function-code --function-name=${{ matrix.lambda_function }} --zip-file=fileb://${{ matrix.lmabda_function }}/deployment_package_${{ matrix.lambda_function }}.zip
