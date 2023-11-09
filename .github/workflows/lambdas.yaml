@@ -23,14 +23,15 @@ jobs:
           cd ${{ matrix.lambda_function }}
           mkdir package
           pip install -r requirements.txt --target ./package
-          # working-directory: ${{ github.workspace }}
-
-      - name: Create deployment package
-        run: |
           cd package
           zip -r ../deployment_package_${{ matrix.lambda_function }}.zip .
           cd ..
           zip deployment_package_${{ matrix.lambda_function }}.zip lambda_function.py
+          # working-directory: ${{ github.workspace }}
+
+      - name: Create deployment package
+        run: |
+          ls
           working-directory: ${{ github.workspace }}
 
       - uses: aws-actions/configure-aws-credentials@v2
