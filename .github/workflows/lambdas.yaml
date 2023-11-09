@@ -29,11 +29,6 @@ jobs:
           zip deployment_package_${{ matrix.lambda_function }}.zip lambda_function.py
           # working-directory: ${{ github.workspace }}
 
-      - name: Create deployment package
-        run: |
-          ls
-          working-directory: ${{ github.workspace }}
-
       - uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
