@@ -20,13 +20,18 @@ jobs:
           python-version: 3.11
       - name: Install Python dependencies
         run: |
-          pip install -r ${{ matrix.lambda_function }}/requirements.txt
-        working-directory: ${{ github.workspace }}
+          cd ${{ matrix.lambda_function }}
+          mkdir package
+          pip install -r ${{ matrix.lambda_function }}/requirements.txt --target ./package
+          # working-directory: ${{ github.workspace }}
 
       - name: Create deployment package
         run: |
-          zip -r deployment_package_${{ matrix.lambda_function }}.zip ${{ matrix.lambda_function }}/
-        working-directory: ${{ github.workspace }}
+          cd package
+          zip -r ../deployment_package_${{ matrix.lambda_function }}.zip .
+          cd ..
+          zip deployment_package_${{ matrix.lambda_function }}.zip lambda_function.py
+          # working-directory: ${{ github.workspace }}
 
       - uses: aws-actions/configure-aws-credentials@v2
         with:
