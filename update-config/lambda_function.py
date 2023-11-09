@@ -24,6 +24,7 @@ def lambda_handler(event, context):
             return exc
     except Exception as e:
         print(f"Error: {e}")
+
     filter_resource = configfile["accounts"]["ACCOUNT"]["filters"]
     if resource in filter_resource.keys():
         to_append = {
