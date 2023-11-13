@@ -1,3 +1,7 @@
-PACKAGE=github.com/rebuy-de/aws-nuke
-
 include golang.mk
+
+format:
+	gofmt -w .
+
+.PHONY: format
+
