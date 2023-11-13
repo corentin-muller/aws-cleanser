@@ -7,7 +7,9 @@ S3_BUCKET = "nuke-account-cleanser-930842625961-eu-west-3-41d1db50"
 
 def lambda_handler(event, context):
     print("start")
-    configfile = {}
+    configfile = {
+        "account-blocklist": "999999999999"
+    }
     s3 = boto3.client("s3")
 
     region_clean = event.get("region", "eu-west-3")
