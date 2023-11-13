@@ -28,14 +28,12 @@ def lambda_handler(event, context):
     filter_resource = configfile["accounts"]["ACCOUNT"]["filters"]
     if resource in filter_resource.keys():
         to_append = {
-                "invert": "false",
                 "type": "exact",
                 "value": identifier
             }
         filter_resource[resource].append(to_append)
     else:
         configfile["accounts"]["ACCOUNT"]["filters"][resource] = {
-                "invert": "false",
                 "type": "exact",
                 "value": identifier
         }
