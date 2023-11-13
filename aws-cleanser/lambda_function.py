@@ -34,6 +34,7 @@ def lambda_handler(event, context):
     )
     sf = boto3.client('stepfunctions', region_name = 'eu-west-3')
     input_dict = {"InputPayLoad": {
+        "invocation_type": "lambda",
         "nuke_dry_run": dry_run,
         "nuke_version": version,
         "region_list": [region_clean]
