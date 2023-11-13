@@ -13,8 +13,8 @@ import (
 )
 
 type EC2Instance struct {
-	svc      *ec2.EC2
-	instance *ec2.Instance
+	svc        *ec2.EC2
+	instance   *ec2.Instance
 	launchTime time.Time
 
 	featureFlags config.FeatureFlags
@@ -37,8 +37,8 @@ func ListEC2Instances(sess *session.Session) ([]Resource, error) {
 		for _, reservation := range resp.Reservations {
 			for _, instance := range reservation.Instances {
 				resources = append(resources, &EC2Instance{
-					svc:      svc,
-					instance: instance,
+					svc:        svc,
+					instance:   instance,
 					launchTime: aws.TimeValue(instance.LaunchTime),
 				})
 			}

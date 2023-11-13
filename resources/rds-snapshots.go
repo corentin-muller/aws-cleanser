@@ -11,10 +11,10 @@ import (
 )
 
 type RDSSnapshot struct {
-	svc      *rds.RDS
-	snapshot *rds.DBSnapshot
+	svc         *rds.RDS
+	snapshot    *rds.DBSnapshot
 	createdTime time.Time
-	tags     []*rds.Tag
+	tags        []*rds.Tag
 }
 
 func init() {
@@ -39,10 +39,10 @@ func ListRDSSnapshots(sess *session.Session) ([]Resource, error) {
 		}
 
 		resources = append(resources, &RDSSnapshot{
-			svc:      svc,
-			snapshot: snapshot,
+			svc:         svc,
+			snapshot:    snapshot,
 			createdTime: aws.TimeValue(snapshot.SnapshotCreateTime),
-			tags:     tags.TagList,
+			tags:        tags.TagList,
 		})
 
 	}

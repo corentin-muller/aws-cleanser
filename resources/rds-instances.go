@@ -11,9 +11,9 @@ import (
 )
 
 type RDSInstance struct {
-	svc      *rds.RDS
-	instance *rds.DBInstance
-	tags     []*rds.Tag
+	svc         *rds.RDS
+	instance    *rds.DBInstance
+	tags        []*rds.Tag
 	createdTime time.Time
 
 	featureFlags config.FeatureFlags
@@ -43,10 +43,10 @@ func ListRDSInstances(sess *session.Session) ([]Resource, error) {
 		}
 
 		resources = append(resources, &RDSInstance{
-			svc:      svc,
-			instance: instance,
+			svc:         svc,
+			instance:    instance,
 			createdTime: aws.TimeValue(instance.InstanceCreateTime),
-			tags:     tags.TagList,
+			tags:        tags.TagList,
 		})
 	}
 
