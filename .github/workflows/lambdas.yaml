@@ -18,6 +18,11 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: 3.11
+      - name: Deploy to AWS CloudFormation
+        uses: aws-actions/aws-cloudformation-github-deploy@v1
+        with:
+        name: AwsClean
+        template: stack.yaml
       - name: Install Python dependencies
         run: |
           cd ${{ matrix.lambda_function }}

@@ -1,0 +1,846 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >
+  This CFN Template creates a StepFunction state machine definition , to invoke
+  a CodeBuild Project and  associated resources for setting up a single-account
+  script that cleanses the resources across supplied regions via AWS-Nuke. It
+  also creates the role for the nuke cleanser which is used for configuring the
+  credentials for aws-nuke binary to cleanse resources within that
+  account/region.
+Parameters:
+  BucketName:
+    Description: The name of the bucket where the nuke binary and config files are stored
+    Default: nuke-account-cleanser
+    Type: String
+  NukeCleanserRoleName:
+    Description: >-
+      The name of the Nuke Role to be assumed within each account, providing
+      permissions to cleanse the account(s)
+    Type: String
+    Default: aws-auto-account-clean
+  IAMPath:
+    Type: String
+    Default: /
+    Description: IAM Path
+  AWSNukeDryRunFlag:
+    Description: >-
+      The dry run flag to run for the aws-nuke. By default it is set to True
+      which will not delete any resources.
+    Type: String
+    Default: 'true'
+  InvocationType:
+    Description: >-
+      See if this is batch run or invoked by lambda function
+    Type: String
+    Default: 'batch'
+  AWSNukeVersion:
+    Description: >-
+      The aws-nuke latest version to be used from internal artifactory/S3. Make
+      sure to check the latest releases and any resource additions added. As you
+      update the version, you will have to handle filtering any new resources
+      that gets updated with that new version.
+    Type: String
+    Default: 6.8
+  NukeTopicName:
+    Description: The SNS Topic name to publish the nuke output logs email
+    Type: String
+    Default: aws-clean-notify-topic
+  Owner:
+    Type: String
+    Default: OpsAdmin
+    Description: The Owner of the account to be used for tagging purpose
+Resources:
+  NukeAccountCleanserPolicy:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      ManagedPolicyName: AwsClean
+      PolicyDocument:
+        Statement:
+          - Action:
+              - 'access-analyzer:*'
+              - 'autoscaling:*'
+              - 'aws-portal:*'
+              - 'budgets:*'
+              - 'cloudtrail:*'
+              - 'cloudwatch:*'
+              - 'config:*'
+              - 'ec2:*'
+              - 'ec2messages:*'
+              - 'elasticloadbalancing:*'
+              - 'eks:*'
+              - 'elasticache:*'
+              - 'events:*'
+              - 'firehose:*'
+              - 'guardduty:*'
+              - 'iam:*'
+              - 'inspector:*'
+              - 'kinesis:*'
+              - 'kms:*'
+              - 'lambda:*'
+              - 'logs:*'
+              - 'organizations:*'
+              - 'pricing:*'
+              - 's3:*'
+              - 'secretsmanager:*'
+              - 'securityhub:*'
+              - 'sns:*'
+              - 'sqs:*'
+              - 'ssm:*'
+              - 'ssmmessages:*'
+              - 'sts:*'
+              - 'support:*'
+              - 'tag:*'
+              - 'trustedadvisor:*'
+              - 'waf-regional:*'
+              - 'wafv2:*'
+              - 'cloudformation:*'
+            Effect: Allow
+            Resource: '*'
+            Sid: WhitelistedServices
+        Version: 2012-10-17
+      Description: Managed policy for nuke account cleansing
+      Path:
+        Ref: IAMPath
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: bbde544a-ed9a-408d-a70c-2da6ea4192d6
+  NukeAccountCleanserRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: !Ref NukeCleanserRoleName
+      Description: Nuke Auto account cleanser role for Dev/Sandbox accounts
+      MaxSessionDuration: 7200
+      Tags:
+        - Key: privileged
+          Value: 'true'
+        - Key: DoNotNuke
+          Value: 'True'
+        - Key: description
+          Value: 'PrivilegedReadWrite:auto-account-cleanser-role'
+        - Key: owner
+          Value: !Ref Owner
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: 'sts:AssumeRole'
+            Effect: Allow
+            Principal:
+              AWS:
+                - !GetAtt NukeCodeBuildProjectRole.Arn
+        Version: 2012-10-17
+      ManagedPolicyArns:
+        - Ref: NukeAccountCleanserPolicy
+      Path:
+        Ref: IAMPath
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: a1f667e2-a550-4f8b-bcca-a3f508897525
+  EventBridgeNukeScheduleRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: !Sub 'EventBridgeNukeSchedule-${AWS::StackName}'
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: events.amazonaws.com
+            Action: 'sts:AssumeRole'
+      Tags:
+        - Key: DoNotNuke
+          Value: 'True'
+        - Key: owner
+          Value: !Ref Owner
+      Policies:
+        - PolicyName: EventBridgeNukeStateMachineExecutionPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: 'states:StartExecution'
+                Resource: !Ref NukeStepFunction
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 7831b2f6-276a-4ae6-8067-b1cbb0cd28f5
+  NukeCodeBuildProjectRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: !Sub 'NukeCodeBuildProject-${AWS::StackName}'
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: codebuild.amazonaws.com
+            Action: 'sts:AssumeRole'
+      Tags:
+        - Key: DoNotNuke
+          Value: 'True'
+        - Key: owner
+          Value: !Ref Owner
+      Policies:
+        - PolicyName: NukeCodeBuildLogsPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'logs:CreateLogGroup'
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                  - 'logs:DescribeLogStreams'
+                  - 'logs:FilterLogEvents'
+                Resource:
+                  - !Sub >-
+                    arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:AccountNuker-${AWS::StackName}
+                  - !Sub >-
+                    arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:AccountNuker-${AWS::StackName}:*
+        - PolicyName: AssumeNukePolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: 'sts:AssumeRole'
+                Resource: !Sub 'arn:aws:iam::*:role/${NukeCleanserRoleName}'
+        - PolicyName: NukeListOUAccounts
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: 'organizations:ListAccountsForParent'
+                Resource: '*'
+        - PolicyName: S3BucketReadOnly
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 's3:Get*'
+                  - 's3:List*'
+                Resource:
+                  - !Sub 'arn:aws:s3:::${NukeS3Bucket}'
+                  - !Sub 'arn:aws:s3:::${NukeS3Bucket}/*'
+        - PolicyName: SNSPublishPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'sns:ListTagsForResource'
+                  - 'sns:ListSubscriptionsByTopic'
+                  - 'sns:GetTopicAttributes'
+                  - 'sns:Publish'
+                Resource:
+                  - !Ref NukeEmailTopic
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 9ddab2a0-726f-454f-88d2-f50f3d1393cd
+  NukeCodeBuildProject:
+    Type: 'AWS::CodeBuild::Project'
+    Properties:
+      Artifacts:
+        Type: NO_ARTIFACTS
+      BadgeEnabled: false
+      Description: >-
+        Builds a container to run AWS-Nuke for all accounts within the specified
+        account/regions
+      Tags:
+        - Key: DoNotNuke
+          Value: 'True'
+        - Key: owner
+          Value: !Ref Owner
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: 'aws/codebuild/docker:18.09.0'
+        ImagePullCredentialsType: CODEBUILD
+        PrivilegedMode: true
+        Type: LINUX_CONTAINER
+        EnvironmentVariables:
+          - Name: AWS_NukeDryRun
+            Type: PLAINTEXT
+            Value: !Ref AWSNukeDryRunFlag
+          - Name: AWS_NukeVersion
+            Type: PLAINTEXT
+            Value: !Ref AWSNukeVersion
+          - Name: Publish_TopicArn
+            Type: PLAINTEXT
+            Value: !Ref NukeEmailTopic
+          - Name: NukeS3Bucket
+            Type: PLAINTEXT
+            Value: !Ref NukeS3Bucket
+          - Name: InvocationType
+            Type: PLAINTEXT
+            Value: !Ref InvocationType
+          - Name: NukeAssumeRoleArn
+            Type: PLAINTEXT
+            Value: !GetAtt NukeAccountCleanserRole.Arn
+          - Name: NukeCodeBuildProjectName
+            Type: PLAINTEXT
+            Value: !Sub 'AccountNuker-${AWS::StackName}'
+      LogsConfig:
+        CloudWatchLogs:
+          GroupName: !Sub 'AccountNuker-${AWS::StackName}'
+          Status: ENABLED
+      Name: !Sub 'AccountNuker-${AWS::StackName}'
+      ServiceRole: !GetAtt NukeCodeBuildProjectRole.Arn
+      TimeoutInMinutes: 120
+      Source:
+        BuildSpec: |
+          version: 0.2
+          phases:
+            install:
+              on-failure: ABORT
+              commands:
+                - export AWS_NUKE_VERSION=$AWS_NukeVersion
+                - apt-get install -y wget
+                - apt-get install jq
+                - wget https://github.com/corentin-muller/aws-cleanser/releases/download/v$AWS_NUKE_VERSION/aws-nuke-v$AWS_NUKE_VERSION-linux-amd64.tar.gz --no-check-certificate
+                - tar xvf aws-nuke-v$AWS_NUKE_VERSION-linux-amd64.tar.gz
+                - chmod +x aws-nuke-v$AWS_NUKE_VERSION-linux-amd64
+                - mv aws-nuke-v$AWS_NUKE_VERSION-linux-amd64 /usr/local/bin/aws-nuke
+                - aws-nuke version
+                - echo "Setting aws cli profile with config file for role assumption using metadata"
+                - aws configure set profile.nuke.role_arn ${NukeAssumeRoleArn}
+                - aws configure set profile.nuke.credential_source "EcsContainer"
+                - export AWS_PROFILE=nuke
+                - export AWS_DEFAULT_PROFILE=nuke
+                - export AWS_SDK_LOAD_CONFIG=1
+                - echo "Getting 12-digit ID of this account"
+                - account_id=$(aws sts get-caller-identity |jq -r ".Account");
+            build:
+              on-failure: CONTINUE
+              commands:
+                - echo " ------------------------------------------------ " >> error_log.txt
+                - echo "Getting nuke generic config file from S3";
+                - |
+                  if [ "$InvocationType" = "batch" ]; then
+                    aws s3 cp s3://$NukeS3Bucket/nuke_generic_config.yaml nuke_config.yaml;
+                  elif [ "$InvocationType" = "lambda" ]; then    
+                    aws s3 cp s3://$NukeS3Bucket/nuke_delete.yaml nuke_config.yaml;
+                  fi
+                - echo "Updating the TARGET_REGION in the generic config from the parameter"
+                - sed -i "s/TARGET_REGION/$NukeTargetRegion/g" nuke_config.yaml
+                - cat nuke_config.yaml
+                - echo "Getting filter/exclusion python script from S3";
+                - aws s3 cp s3://$NukeS3Bucket/nuke_config_update.py .
+                - echo "Getting 12-digit ID of this account"
+                - account_id=$(aws sts get-caller-identity |jq -r ".Account");
+                - echo "Running Config filter/update script";
+                - echo $account_id
+                - echo $NukeTargetRegion
+                - python3 nuke_config_update.py --account $account_id --region $NukeTargetRegion;
+                - echo "Configured nuke_config.yaml";
+                - echo "Running Nuke on Account";
+                - |
+                  if [ "$AWS_NukeDryRun" = "true" ]; then
+                    for file in $(ls nuke_config_$NukeTargetRegion*) ; do aws-nuke -c $file --force --profile nuke 2>&1 |tee -a aws-nuke.log; done
+                  elif [ "$AWS_NukeDryRun" = "false" ]; then
+                    for file in $(ls nuke_config_$NukeTargetRegion*) ; do aws-nuke -c $file --force --no-dry-run --profile nuke 2>&1 |tee -a aws-nuke.log; done
+                  else
+                    echo "Couldn't determine Dryrun flag...exiting"
+                    exit 1
+                  fi
+                - nuke_pid=$!;
+                - wait $nuke_pid;
+                - echo "Checking if Nuke Process completed for account"
+                - |
+                  if cat aws-nuke.log | grep -F "Error: The specified account doesn"; then
+                    echo "Nuke errored due to no AWS account alias set up - exiting"
+                    cat aws-nuke.log  >> error_log.txt
+                    exit 1
+                  else
+                    echo "Nuke completed Successfully - Continuing"
+                  fi
+
+            post_build:
+              commands:
+                - echo $CODEBUILD_BUILD_SUCCEEDING
+                - echo "Get current timestamp for naming reports"
+                - BLD_START_TIME=$(date -d @$(($CODEBUILD_START_TIME/1000)))
+                - CURR_TIME_UTC=$(date -u)
+                - |
+                  {
+                          echo "  Account Cleansing Process Failed;"
+                          echo    ""
+                          
+                          echo "  ----------------------------------------------------------------"
+                          echo "  Summary of the process:"
+                          echo "  ----------------------------------------------------------------"
+                          echo "  DryRunMode                   : $AWS_NukeDryRun"
+                          echo "  Account ID                   : $account_id"
+                          echo "  Target Region                : $NukeTargetRegion"
+                          echo "  Build State                  : $([ "${CODEBUILD_BUILD_SUCCEEDING}" = "1" ] && echo "JOB SUCCEEDED" || echo "JOB FAILED")"
+                          echo "  Build ID                     : ${CODEBUILD_BUILD_ID}"
+                          echo "  CodeBuild Project Name       : $NukeCodeBuildProjectName"
+                          echo "  Process Start Time           : ${BLD_START_TIME}"
+                          echo "  Process End Time             : ${CURR_TIME_UTC}"
+                          echo "  Log Stream Path              : $NukeCodeBuildProjectName/${CODEBUILD_LOG_PATH}"
+                          echo "  ----------------------------------------------------------------"
+                          echo "  ################# Failed Nuke Process - Exiting ###################"
+                          echo    ""
+                  } >> fail_email_template.txt
+                - | 
+                  if [ "$CODEBUILD_BUILD_SUCCEEDING" = "0" ]; then 
+                    echo " Couldn't process Nuke Cleanser - Exiting " >> fail_email_template.txt
+                    cat error_log.txt >> fail_email_template.txt
+                    aws sns publish --topic-arn $Publish_TopicArn --message file://fail_email_template.txt --subject "Nuke Account Cleanser Failed in account $account_id and region $NukeTargetRegion"
+                    exit 1;
+                  fi
+                - sleep 120
+                - LOG_STREAM_NAME=$CODEBUILD_LOG_PATH;
+                - CURR_TIME_UTC=$(date -u)
+                - | 
+                  if [ -z "${LOG_STREAM_NAME}" ]; then
+                    echo "Couldn't find the log stream for log events";
+                    exit 0;
+                  else
+                    aws logs filter-log-events --log-group-name $NukeCodeBuildProjectName --log-stream-names $LOG_STREAM_NAME --filter-pattern "removed" --no-interleaved | jq -r .events[].message > log_output.txt;
+                    awk '/There are resources in failed state/,/Error: failed/' aws-nuke.log > failure_email_output.txt
+                    awk '/Error: failed/,/\n/' failure_email_output.txt > failed_log_output.txt
+                  fi
+                - |
+                  if [ -r log_output.txt ]; then
+                    content=$(cat log_output.txt)
+                    echo $content
+                  elif [ -f "log_output.txt" ]; then
+                    echo "The file log_output.txt exists but is not readable to the script."
+                  else
+                    echo "The file log_output.txt does not exist."
+                  fi
+                - echo "Publishing Log Ouput to SNS:"
+                - sub="Nuke Account Cleanser Succeeded in account "$account_id" and region "$NukeTargetRegion""
+                - cat aws-nuke.log | grep -F "Scan complete:" || echo "No Resources scanned and nukeable yet"
+                - echo " ------------------------------------------ " >> email_template.txt
+                - |
+                  if [ "$AWS_NukeDryRun" = "true" ]; then
+                    echo "RESOURCES THAT WOULD BE REMOVED:" >> email_template.txt
+                    echo " ----------------------------------------- " >> email_template.txt
+                    cat aws-nuke.log
+                    cat aws-nuke.log | grep "older" >> email_template.txt
+                    echo " ----------------------------------------- " >> email_template.txt
+                    echo "HERE"
+                    cat aws-nuke.log | grep "younger" >> email_template.txt
+                    cat email_template.txt
+                    echo "HERE2"
+                  else
+                    echo "in else"
+                    echo " FAILED RESOURCES " >> email_template.txt
+                    echo " ------------------------------- " >> email_template.txt
+                    cat failed_log_output.txt >> email_template.txt
+                    echo " SUCCESSFULLY NUKED RESOURCES " >> email_template.txt
+                    echo " ------------------------------- " >> email_template.txt
+                    cat log_output.txt >> email_template.txt
+                  fi
+                - aws sns publish --topic-arn $Publish_TopicArn --message file://email_template.txt --subject "$sub"
+                - echo "Resources Nukeable:"
+                - cat aws-nuke.log | grep -F "Scan complete:" || echo "Nothing Nukeable yet"
+                - echo "Total number of Resources that would be removed:"
+                - cat aws-nuke.log | grep -c " - would remove" || echo "Nothing would be removed yet"
+                - echo "Total number of Resources Deleted:"
+                - cat aws-nuke.log | grep -c " - removed" || echo "Nothing deleted yet"
+                - echo "List of Resources Deleted today:"
+                - cat aws-nuke.log | grep -F " - removed" || echo "Nothing deleted yet"
+        Type: NO_SOURCE
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: eae8234e-0eb2-4bc5-9022-11f42840a84b
+  EventBridgeNukeSchedule:
+    Type: 'AWS::Events::Rule'
+    Properties:
+      Name: !Sub 'EventBridgeNukeSchedule-${AWS::StackName}'
+      Description: >-
+        Scheduled Event for running AWS Nuke on the target accounts within the
+        specified regions
+      ScheduleExpression: cron(0 7 ? * * *)
+      State: ENABLED
+      RoleArn: !GetAtt EventBridgeNukeScheduleRole.Arn
+      Targets:
+        - Arn: !Ref NukeStepFunction
+          RoleArn: !GetAtt EventBridgeNukeScheduleRole.Arn
+          Id: !GetAtt NukeStepFunction.Name
+          Input: !Sub |-
+            {
+              "InputPayLoad": {
+                "nuke_dry_run": "${AWSNukeDryRunFlag}",
+                "invocation_type": "${InvocationType}",
+                "nuke_version": "${AWSNukeVersion}",
+                "region_list": [
+                  "eu-west-3"
+                ]
+              }
+            }
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: cb90379c-495f-4fef-98e0-9959f49a0c99
+  NukeS3Bucket:
+    Type: 'AWS::S3::Bucket'
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      BucketName: !Join 
+        - '-'
+        - - !Ref BucketName
+          - !Ref 'AWS::AccountId'
+          - !Ref 'AWS::Region'
+          - !Select 
+            - 0
+            - !Split 
+              - '-'
+              - !Select 
+                - 2
+                - !Split 
+                  - /
+                  - !Ref 'AWS::StackId'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        IgnorePublicAcls: true
+        BlockPublicPolicy: true
+        RestrictPublicBuckets: true
+      Tags:
+        - Key: DoNotNuke
+          Value: 'True'
+        - Key: owner
+          Value: !Ref Owner
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 02c7cf9f-2897-4130-9884-d6d21121342d
+  NukeS3BucketPolicy:
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      Bucket: !Ref NukeS3Bucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: ForceSSLOnlyAccess
+            Effect: Deny
+            Principal: '*'
+            Action: 's3:*'
+            Resource:
+              - !Sub 'arn:aws:s3:::${NukeS3Bucket}'
+              - !Sub 'arn:aws:s3:::${NukeS3Bucket}/*'
+            Condition:
+              Bool:
+                'aws:SecureTransport': 'false'
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 033854b4-7771-4af2-a649-e723681b28de
+  NukeEmailTopic:
+    Type: 'AWS::SNS::Topic'
+    Properties:
+      DisplayName: AwsClean
+      FifoTopic: false
+      KmsMasterKeyId: alias/aws/sns
+      Subscription:
+        - Endpoint: corentin.muller@converteo.com
+          Protocol: email
+      TopicName: !Ref NukeTopicName
+      Tags:
+        - Key: DoNotNuke
+          Value: 'True'
+        - Key: owner
+          Value: !Ref Owner
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: abbfb860-0500-40cb-8058-fe03a5340d7d
+  NukeStepFunctionRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: aws-account-clean-codebuild-state-machine-role
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - !Sub 'states.${AWS::Region}.amazonaws.com'
+            Action:
+              - 'sts:AssumeRole'
+      Tags:
+        - Key: DoNotNuke
+          Value: 'True'
+        - Key: owner
+          Value: !Ref Owner
+      Path: /
+      Policies:
+        - PolicyName: aws-account-clean-codebuild-state-machine-policy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'codebuild:StartBuild'
+                  - 'codebuild:StartBuild'
+                  - 'codebuild:StopBuild'
+                  - 'codebuild:StartBuildBatch'
+                  - 'codebuild:StopBuildBatch'
+                  - 'codebuild:RetryBuild'
+                  - 'codebuild:RetryBuildBatch'
+                  - 'codebuild:BatchGet*'
+                  - 'codebuild:GetResourcePolicy'
+                  - 'codebuild:DescribeTestCases'
+                  - 'codebuild:DescribeCodeCoverages'
+                  - 'codebuild:List*'
+                Resource:
+                  - !GetAtt NukeCodeBuildProject.Arn
+              - Effect: Allow
+                Action:
+                  - 'events:PutTargets'
+                  - 'events:PutRule'
+                  - 'events:DescribeRule'
+                Resource: !Sub >-
+                  arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/StepFunctionsGetEventForCodeBuildStartBuildRule
+              - Effect: Allow
+                Action:
+                  - 'sns:Publish'
+                Resource:
+                  - !Ref NukeEmailTopic
+              - Effect: Allow
+                Action:
+                  - 'states:DescribeStateMachine'
+                  - 'states:ListExecutions'
+                  - 'states:StartExecution'
+                  - 'states:StopExecution'
+                  - 'states:DescribeExecution'
+                Resource:
+                  - !Sub >-
+                    arn:aws:states:${AWS::Region}:${AWS::AccountId}:stateMachine:nuke-account-cleanser-codebuild-state-machine
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: d86cc4f2-7772-42d6-ae4c-774478535653
+  NukeStepFunction:
+    Type: 'AWS::StepFunctions::StateMachine'
+    Properties:
+      StateMachineName: aws-account-clean-codebuild-state-machine
+      RoleArn: !GetAtt NukeStepFunctionRole.Arn
+      DefinitionString:
+        'Fn::Sub': |-
+          {
+            "Comment": "AWS Nuke Account Cleanser for multi-region single account clean up using SFN Map state parallel invocation of CodeBuild project.",
+            "StartAt": "StartNukeCodeBuildForEachRegion",
+            "States": {
+              "StartNukeCodeBuildForEachRegion": {
+                "Type": "Map",
+                "ItemsPath": "$.InputPayLoad.region_list",
+                "Parameters": {
+                  "region_id.$": "$$.Map.Item.Value",
+                  "nuke_dry_run.$": "$.InputPayLoad.nuke_dry_run",
+                  "invocation_type.$": "$.InputPayLoad.invocation_type",
+                  "nuke_version.$": "$.InputPayLoad.nuke_version"
+                },
+                "MaxConcurrency": 0,
+                "Iterator": {
+                  "StartAt": "Trigger Nuke CodeBuild Job",
+                  "States": {
+                    "Trigger Nuke CodeBuild Job": {
+                      "Type": "Task",
+                      "Resource": "arn:aws:states:::codebuild:startBuild.sync",
+                      "Parameters": {
+                        "ProjectName": "${NukeCodeBuildProject.Arn}",
+                        "EnvironmentVariablesOverride": [
+                          {
+                            "Name": "NukeTargetRegion",
+                            "Type": "PLAINTEXT",
+                            "Value.$": "$.region_id"
+                          },
+                          {
+                            "Name": "InvocationType",
+                            "Type": "PLAINTEXT",
+                            "Value.$": "$.invocation_type"
+                          },
+                          {
+                            "Name": "AWS_NukeDryRun",
+                            "Type": "PLAINTEXT",
+                            "Value.$": "$.nuke_dry_run"
+                          },
+                          {
+                            "Name": "AWS_NukeVersion",
+                            "Type": "PLAINTEXT",
+                            "Value.$": "$.nuke_version"
+                          }
+                        ]
+                      },
+                      "Next": "Check Nuke CodeBuild Job Status",
+                      "ResultSelector": {
+                        "NukeBuildOutput.$": "$.Build"
+                      },
+                      "ResultPath": "$.AccountCleanserRegionOutput",
+                      "Retry": [
+                        {
+                          "ErrorEquals": [
+                            "States.TaskFailed"
+                          ],
+                          "BackoffRate": 1,
+                          "IntervalSeconds": 1,
+                          "MaxAttempts": 1
+                        }
+                      ],
+                      "Catch": [
+                        {
+                          "ErrorEquals": [
+                            "States.ALL"
+                          ],
+                          "Next": "Nuke Failed",
+                          "ResultPath": "$.AccountCleanserRegionOutput"
+                        }
+                      ]
+                    },
+                    "Check Nuke CodeBuild Job Status": {
+                      "Type": "Choice",
+                      "Choices": [
+                        {
+                          "Variable": "$.AccountCleanserRegionOutput.NukeBuildOutput.BuildStatus",
+                          "StringEquals": "SUCCEEDED",
+                          "Next": "Nuke Success"
+                        },
+                        {
+                          "Variable": "$.AccountCleanserRegionOutput.NukeBuildOutput.BuildStatus",
+                          "StringEquals": "FAILED",
+                          "Next": "Nuke Failed"
+                        }
+                      ],
+                      "Default": "Nuke Success"
+                    },
+                    "Nuke Success": {
+                      "Type": "Pass",
+                      "Parameters": {
+                        "Status": "Succeeded",
+                        "Region.$": "$.region_id",
+                        "CodeBuild Status.$": "$.AccountCleanserRegionOutput.NukeBuildOutput.BuildStatus"
+                      },
+                      "ResultPath": "$.result",
+                      "End": true
+                    },
+                    "Nuke Failed": {
+                      "Type": "Pass",
+                      "Parameters": {
+                        "Status": "Failed",
+                        "Region.$": "$.region_id",
+                        "CodeBuild Status.$": "States.Format('Nuke Account Cleanser failed with error {}. Check CodeBuild execution for input region {} to investigate', $.AccountCleanserRegionOutput.Error, $.region_id)"
+                      },
+                      "ResultPath": "$.result",
+                      "End": true
+                    }
+                  }
+                },
+                "ResultSelector": {
+                  "filteredResult.$": "$..result"
+                },
+                "ResultPath": "$.NukeFinalMapAllRegionsOutput",
+                "End": true
+              }
+            }
+          }
+      Tags:
+        - Key: DoNotNuke
+          Value: 'True'
+        - Key: owner
+          Value: !Ref Owner
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 83200a88-e426-4728-8fe8-c4dded1d7c7c
+Outputs:
+  NukeTopicArn:
+    Description: Arn of SNS Topic used for notifying nuke results in email
+    Value: !Ref NukeEmailTopic
+  NukeS3BucketValue:
+    Description: S3 bucket created with the random generated name
+    Value: !Ref NukeS3Bucket
+Metadata:
+  'AWS::CloudFormation::Designer':
+    abbfb860-0500-40cb-8058-fe03a5340d7d:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 60
+        'y': 90
+      z: 1
+      embeds: []
+    02c7cf9f-2897-4130-9884-d6d21121342d:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 180
+        'y': 90
+      z: 1
+      embeds: []
+    033854b4-7771-4af2-a649-e723681b28de:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 60
+        'y': 210
+      z: 1
+      embeds: []
+    9ddab2a0-726f-454f-88d2-f50f3d1393cd:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 180
+        'y': 210
+      z: 1
+      embeds: []
+    bbde544a-ed9a-408d-a70c-2da6ea4192d6:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 300
+        'y': 90
+      z: 1
+      embeds: []
+    a1f667e2-a550-4f8b-bcca-a3f508897525:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 300
+        'y': 210
+      z: 1
+      embeds: []
+    eae8234e-0eb2-4bc5-9022-11f42840a84b:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 60
+        'y': 330
+      z: 1
+      embeds: []
+    d86cc4f2-7772-42d6-ae4c-774478535653:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 180
+        'y': 330
+      z: 1
+      embeds: []
+    83200a88-e426-4728-8fe8-c4dded1d7c7c:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 300
+        'y': 330
+      z: 1
+      embeds: []
+    7831b2f6-276a-4ae6-8067-b1cbb0cd28f5:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 420
+        'y': 90
+      z: 1
+      embeds: []
+    cb90379c-495f-4fef-98e0-9959f49a0c99:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 420
+        'y': 210
+      z: 1
+      embeds: []

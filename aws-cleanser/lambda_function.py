@@ -1,5 +1,5 @@
-import boto3
 import json
+import boto3
 import yaml
 
 S3_OBJECT = "nuke_delete.yaml"
