@@ -17,6 +17,10 @@ jobs:
       uses: actions/setup-go@v3
       with:
         go-version: '1.21'
+    - name: Setup Python
+      uses: actions/setup-python@v3
+      with:
+        go-version: '3.8'
     - name: Setup tools
       run: |
         go install golang.org/x/lint/golint@latest
@@ -29,6 +33,7 @@ jobs:
           gofmt -s -d .
           exit 1
         fi
+        make qa_check_code
     - name: Test Project
       run: |
         make test
