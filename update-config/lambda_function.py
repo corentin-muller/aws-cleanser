@@ -9,7 +9,8 @@ S3_BUCKET = "nuke-account-cleanser-930842625961-eu-west-3-41d1db50"
 
 def lambda_handler(event, context):
     """
-    Updates the nuke_generic_config.yaml file located on s3 with resource provided
+    Updates the nuke_generic_config.yaml file located on s3
+    with resource provided
     :param event
     :param context
 

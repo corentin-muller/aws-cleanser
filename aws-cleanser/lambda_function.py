@@ -46,7 +46,7 @@ def lambda_handler(event, context):
             "region_list": [region_clean],
         }
     }
-    response = sf.start_execution(
+    sf.start_execution(
         stateMachineArn="arn:aws:states:eu-west-3:930842625961:stateMachine:aws-account-clean-codebuild-state-machine",
         input=json.dumps(input_dict),
     )
