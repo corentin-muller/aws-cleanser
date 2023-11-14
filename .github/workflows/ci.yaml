@@ -54,3 +54,4 @@ jobs:
       with:
         name: AwsClean
         template: stack.yaml
+        capabilities: CAPABILITY_NAMED_IAM
