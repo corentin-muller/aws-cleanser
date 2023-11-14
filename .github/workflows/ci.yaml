@@ -20,7 +20,7 @@ jobs:
     - name: Setup Python
       uses: actions/setup-python@v3
       with:
-        go-version: '3.8'
+        python-version: '3.8'
     - name: Setup tools
       run: |
         go install golang.org/x/lint/golint@latest
