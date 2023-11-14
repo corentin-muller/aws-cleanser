@@ -39,7 +39,7 @@ Parameters:
       update the version, you will have to handle filtering any new resources
       that gets updated with that new version.
     Type: String
-    Default: 6.8
+    Default: 9
   NukeTopicName:
     Description: The SNS Topic name to publish the nuke output logs email
     Type: String
@@ -414,12 +414,9 @@ Resources:
                     echo "RESOURCES THAT WOULD BE REMOVED:" >> email_template.txt
                     echo " ----------------------------------------- " >> email_template.txt
                     cat aws-nuke.log
-                    cat aws-nuke.log | grep "older" >> email_template.txt
+                    cat aws-nuke.log | grep "would remove" | grep "older" >> email_template.txt
                     echo " ----------------------------------------- " >> email_template.txt
-                    echo "HERE"
-                    cat aws-nuke.log | grep "younger" >> email_template.txt
-                    cat email_template.txt
-                    echo "HERE2"
+                    cat aws-nuke.log | grep "would remove" | grep "younger" >> email_template.txt
                   else
                     echo "in else"
                     echo " FAILED RESOURCES " >> email_template.txt
