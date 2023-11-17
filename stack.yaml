@@ -414,9 +414,12 @@ Resources:
                     echo "RESOURCES THAT WOULD BE REMOVED:" >> email_template.txt
                     echo " ----------------------------------------- " >> email_template.txt
                     cat aws-nuke.log
+                    echo "HERE"
                     cat aws-nuke.log | grep "would remove" | grep "older" >> email_template.txt
+                    echo "HERE2"
                     echo " ----------------------------------------- " >> email_template.txt
                     cat aws-nuke.log | grep "would remove" | grep "younger" >> email_template.txt
+                    echo "HERE3"
                   else
                     echo "in else"
                     echo " FAILED RESOURCES " >> email_template.txt
